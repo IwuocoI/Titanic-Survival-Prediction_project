@@ -37,9 +37,6 @@ ENV/
 # 本地数据/临时文件
 *.tmp
 *.log
-data/raw/
-data/temp/
-*.csv
 *.xlsx
 *.zip
 *.rar
