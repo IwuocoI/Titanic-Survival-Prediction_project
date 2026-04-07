@@ -4,6 +4,10 @@
 *.iws
 *.ipr
 
+# VS Code 配置（加上更保险）
+.vscode/
+*.code-workspace
+
 # Python编译缓存
 __pycache__/
 *.py[cod]
@@ -37,7 +41,6 @@ ENV/
 # 本地数据/临时文件
 *.tmp
 *.log
-*.xlsx
 *.zip
 *.rar
 
