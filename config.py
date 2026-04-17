@@ -11,12 +11,19 @@ FEATURES_TRAIN_DATA=r"../data/feature_data/train.csv"
 FEATURES_TEST_DATA=r"../data/feature_data/test.csv"
 
 #结果输出路径
-LOGISTIC_RESULT=r"../result/model1.csv"
-RF_RESULT=r"../result/model2.csv"
-XGBOOST_RESULT=r"../result/model3.csv"
+LOGISTIC_RESULT=r"../results/kaggle/model1.csv"
+RF_RESULT=r"../results/kaggle/model2.csv"
+XGBOOST_RESULT=r"../results/kaggle/model3.csv"
 
 #模型输入特征列表
-use_features=["Pclass","Sex","Age","Fare","Embarked","Embarked_Q","Embarked_S","Embarked_C"]
+FEATURE_USED=["Survived","Pclass","Sex","Age","Fare","Embarked","Embarked_Q","Embarked_S","Embarked_C"]
 
 #种子
-random_seed=54
+RANDOM_SEED=54
+
+#rf模型超参数
+TREE_NUMBER=1000
+MAX_DEPTH=5
+MAX_FEATURES="sqrt"
+SPLIT_SAMPLES=4
+LEAF_SAMPLES=1
