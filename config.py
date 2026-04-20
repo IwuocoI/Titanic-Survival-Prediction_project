@@ -27,3 +27,21 @@ MAX_DEPTH=6
 MAX_FEATURES="sqrt"
 SPLIT_SAMPLES=4
 LEAF_SAMPLES=1
+
+# XGBoost 模型超参数
+XGBOOST_PARAMS = {
+    "objective": "binary:logistic",
+    "eval_metric":"logloss",
+    "n_estimators": 1000,
+    "max_depth": 5,
+    "learning_rate": 0.03,
+    "subsample": 0.85,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 5,
+    "gamma": 0.4,
+    "reg_alpha": 0.2,
+    "reg_lambda": 5,
+    "max_delta_step": 0,
+    "n_jobs": -1,
+    "random_state": RANDOM_SEED,
+}
