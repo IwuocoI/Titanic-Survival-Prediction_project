@@ -22,8 +22,8 @@ def model_rf(result_path,feature):
         min_samples_leaf=config.LEAF_SAMPLES,
         max_features=config.MAX_FEATURES,
         oob_score=True,  # 用oob分数评估模型
-        n_jobs=-1,
-        random_state=config.RANDOM_SEED
+        n_jobs=-1,#多核
+        random_state=config.RANDOM_SEED#限定随机种子
     )
 
     # 训练
@@ -41,10 +41,14 @@ def model_rf(result_path,feature):
 
     # 对测试集进行预测
     predict = pd.Series(rf.predict(test), name="Survived")
-    result = pd.concat([id, predict], axis=1)
-    result.to_csv(result_path, index=False)  # 按提交格式拼接
+    result = pd.concat([id, predict], axis=1)# 按提交格式拼接
+    result.to_csv(result_path, index=False)
     print("预测结果已存入结果文件夹")
+
+    #返回准确率
     return rf.oob_score_
+
+#对预测集进行预测并存储结果
 model_rf(config.RF_RESULT,config.FEATURE_USED)
 
 
