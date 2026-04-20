@@ -22,8 +22,8 @@ FEATURE_USED=["Survived","Pclass","Sex","Age","Fare","Embarked","Embarked_Q","Em
 RANDOM_SEED=54
 
 #rf模型超参数
-TREE_NUMBER=1000
-MAX_DEPTH=5
+TREE_NUMBER=500
+MAX_DEPTH=6
 MAX_FEATURES="sqrt"
 SPLIT_SAMPLES=4
 LEAF_SAMPLES=1

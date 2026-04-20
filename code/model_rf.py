@@ -1,8 +1,12 @@
 import pandas as pd
 import sys
+
+from seaborn.colors import xkcd_rgb
+
 sys.path.append("..")#扩大运行环境以找到config
 import config
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import cross_val_score
 
 def model_rf(result_path,feature):
     data = pd.read_csv(config.CLEAN_TRAIN_DATA)
@@ -26,11 +30,17 @@ def model_rf(result_path,feature):
         random_state=config.RANDOM_SEED#限定随机种子
     )
 
+    #交叉验证
+    cv_score=cross_val_score(rf,x_train,y_train,cv=5)#五折交叉验证
+    cv_mean=cv_score.mean()#平均准确率
+    cv_std=cv_score.std()#标准差
+    print(f"随机森林模型:\n五折交叉验证平均准确率:{cv_mean:.4f}\n标准差:{cv_std:.4}")
+
     # 训练
     rf.fit(x_train, y_train)
 
     # 打印准确率
-    print(f"oob验证准确率：{rf.oob_score_:.4f}")
+    print(f"oob验证准确率:{rf.oob_score_:.4f}")
 
     # 输出测试集结果
     test = pd.read_csv(config.CLEAN_TEST_DATA)
@@ -46,7 +56,7 @@ def model_rf(result_path,feature):
     print("预测结果已存入结果文件夹")
 
     #返回准确率
-    return rf.oob_score_
+    return cv_mean,cv_std
 
 #对预测集进行预测并存储结果
 model_rf(config.RF_RESULT,config.FEATURE_USED)
