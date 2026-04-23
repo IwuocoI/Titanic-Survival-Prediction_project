@@ -45,3 +45,13 @@ XGBOOST_PARAMS = {
     "n_jobs": -1,
     "random_state": RANDOM_SEED,
 }
+
+# 逻辑回归模型超参数
+LOGISTIC_PARAMS = {
+    "penalty": "l2",
+    "C": 1.0,
+    "solver": "liblinear",
+    "max_iter": 1000,
+    "random_state": RANDOM_SEED,
+    "n_jobs": -1
+}
