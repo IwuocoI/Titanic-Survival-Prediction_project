@@ -151,7 +151,7 @@ PassengerId,Pclass,Sex,Age,Fare,Embarked_C,Embarked_Q,Embarked_S
 1041,2,1,30.0,26.0,False,False,True
 1042,1,0,23.0,83.1583,True,False,False
 1043,3,1,27.0,7.8958,True,False,False
-1044,3,1,60.5,,False,False,True
+1044,3,1,60.5,14.4542,False,False,True
 1045,3,0,36.0,12.1833,False,False,True
 1046,3,1,13.0,31.3875,False,False,True
 1047,3,1,24.0,7.55,False,False,True

@@ -7,6 +7,7 @@ def data_clean_1(IN_PATH,OUT_PATH):
     data=pd.read_csv(IN_PATH)
     data=data.drop(columns=["Name","SibSp", "Parch", "Ticket", "Cabin"])
     data["Age"]=data["Age"].fillna(data["Age"].median())#中位数填充
+    data["Fare"] = data["Fare"].fillna(data["Fare"].median())#验证集fare缺了一个
     data["Embarked"]=data["Embarked"].fillna("S")#众数填充
     data.to_csv(OUT_PATH,index=False)#写入清洗后表格
 
