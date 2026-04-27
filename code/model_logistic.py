@@ -22,14 +22,9 @@ def model_lr(result_path, feature_cols, label_col="Survived", id_col="PassengerI
     #分离特征和标签（训练集）：只保留特征列+标签列，删除ID列
     X_train = train_df[feature_cols].copy()  # 直接用指定的特征列，不用排除法
     y_train = train_df[label_col].copy()     # 标签列参数化
-    test_passenger_id = test_df[id_col].copy()  # ID列参数化
-    
-    #测试集特征处理：只保留指定特征列，处理缺失值
+
     X_test = test_df[feature_cols].copy()
-    #处理测试集Fare缺失值（针对缺失值进行的处理，若数据集在其它函数补全可注释/删除）
-    if X_test["Fare"].isnull().any():
-        fare_median = train_df["Fare"].median()  # 用训练集中位数填充
-        X_test["Fare"].fillna(fare_median, inplace=True)
+    test_passenger_id = test_df[id_col].copy()  # ID列参数化
     
     #标准化
     scaler = StandardScaler()
