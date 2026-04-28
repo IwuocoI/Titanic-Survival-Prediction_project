@@ -46,7 +46,7 @@ def model_rf(result_path,feature):
     test = pd.read_csv(config.CLEAN_TEST_DATA)
     id = test["PassengerId"]  # 保留id
     for i in test.columns:  # 去除不要的特征
-        if i not in config.FEATURE_USED:
+        if i not in feature:
             test = test.drop(i, axis=1)
 
     # 对测试集进行预测
