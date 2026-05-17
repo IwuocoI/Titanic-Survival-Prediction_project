@@ -7,7 +7,7 @@ import sys
 sys.path.append("..")
 import config
 
-def model_lr(result_path, feature_cols, label_col="Survived", id_col="PassengerId"):
+def model_lr(train_data,test_data,result_path, feature_cols, label_col="Survived", id_col="PassengerId"):
     """
     :param result_path: 预测结果保存路径
     :param feature_cols: 要使用的特征列列表（仅特征，不含标签/ID）
@@ -16,8 +16,8 @@ def model_lr(result_path, feature_cols, label_col="Survived", id_col="PassengerI
     :return: 交叉验证平均分、标准差
     """
     #读取数据
-    train_df = pd.read_csv(config.CLEAN_TRAIN_DATA)
-    test_df = pd.read_csv(config.CLEAN_TEST_DATA)
+    train_df = pd.read_csv(train_data)
+    test_df = pd.read_csv(test_data)
     id=test_df["PassengerId"]
     
     #分离特征和标签（训练集）：只保留特征列+标签列，删除ID列
@@ -46,7 +46,7 @@ def model_lr(result_path, feature_cols, label_col="Survived", id_col="PassengerI
     val_scores = cross_val_score(model, X_train_scaled, Y_train, cv=5)
     cv_mean = val_scores.mean()
     cv_std = val_scores.std()
-    print(f"逻辑回归5折交叉验证平均分: {cv_mean:.4f}, 标准差: {cv_std:.4f}")
+    print(f"逻辑回归5折交叉验证平均分: {cv_mean:.4f}\n 标准差: {cv_std:.4f}")
     
     #预测并保存
     model.fit(X_train_scaled, Y_train)
@@ -58,4 +58,5 @@ def model_lr(result_path, feature_cols, label_col="Survived", id_col="PassengerI
     return cv_mean, cv_std
 
 #对预测集进行预测并存储结果
-model_lr(config.LOGISTIC_RESULT,config.FEATURE_USED)
+if __name__ == "__main__":
+    model_lr(config.CLEAN_TRAIN_DATA,config.CLEAN_TEST_DATA,config.LOGISTIC_RESULT,config.FEATURE_USED)

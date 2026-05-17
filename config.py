@@ -10,6 +10,11 @@ CLEAN_TEST_DATA=r"../data/processed_data/test.csv"
 FEATURES_TRAIN_DATA=r"../data/feature_data/train.csv"
 FEATURES_TEST_DATA=r"../data/feature_data/test.csv"
 
+#特征工程结果路径
+FEATURES_LOGISTIC_RESULT=r"../results/experiment/feature/kaggle/model1.csv"
+FEATURES_RF_RESULT=r"../results/experiment/feature/kaggle/model2.csv"
+FEATURES_XGBOOST_RESULT=r"../results/experiment/feature/kaggle/model3.csv"
+
 #结果输出路径
 LOGISTIC_RESULT=r"../results/kaggle/model1.csv"
 RF_RESULT=r"../results/kaggle/model2.csv"
@@ -22,11 +27,16 @@ FEATURE_USED=["Survived","Pclass","Sex","Age","Fare","Embarked","Embarked_Q","Em
 RANDOM_SEED=54
 
 #rf模型超参数
-TREE_NUMBER=500
-MAX_DEPTH=6
-MAX_FEATURES="sqrt"
-SPLIT_SAMPLES=4
-LEAF_SAMPLES=1
+RF_PARAMS={
+"n_estimators":500,
+"max_depth":6,
+"max_features":"sqrt",
+"min_samples_split":4,
+"min_samples_leaf":1,
+"oob_score":True,
+"n_jobs":-1,
+"random_state":RANDOM_SEED
+}
 
 # XGBoost 模型超参数
 XGBOOST_PARAMS = {

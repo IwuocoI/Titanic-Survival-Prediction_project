@@ -6,9 +6,9 @@ sys.path.append("..")
 import config
 
 
-def model_xgboost(result_path, features):
+def model_xgboost(train_data,test_data,result_path, features):
     # 数据处理
-    data = pd.read_csv(config.CLEAN_TRAIN_DATA)
+    data = pd.read_csv(train_data)
     for i in data.columns:
         if i not in features:
             data = data.drop(i, axis=1)
@@ -42,7 +42,7 @@ def model_xgboost(result_path, features):
     final_model.fit(x_train, y_train)
 
     # 预测
-    test = pd.read_csv(config.CLEAN_TEST_DATA)
+    test = pd.read_csv(test_data)
     id = test["PassengerId"]
     for i in test.columns:
         if i not in features:
@@ -57,4 +57,4 @@ def model_xgboost(result_path, features):
 
 
 if __name__ == "__main__":
-    model_xgboost(config.XGBOOST_RESULT, config.FEATURE_USED)
+    model_xgboost(config.CLEAN_TRAIN_DATA,config.CLEAN_TEST_DATA,config.XGBOOST_RESULT, config.FEATURE_USED)

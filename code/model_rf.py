@@ -8,8 +8,8 @@ import config
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import cross_val_score
 
-def model_rf(result_path,feature):
-    data = pd.read_csv(config.CLEAN_TRAIN_DATA)
+def model_rf(train_data,test_data,result_path,feature):
+    data = pd.read_csv(train_data)
     for i in data.columns:  # 取用需要的特征
         if i not in feature:
             data = data.drop(i, axis=1)
@@ -19,16 +19,7 @@ def model_rf(result_path,feature):
     y_train = data["Survived"]
 
     # 模型定义
-    rf = RandomForestClassifier(
-        n_estimators=config.TREE_NUMBER,
-        max_depth=config.MAX_DEPTH,
-        min_samples_split=config.SPLIT_SAMPLES,
-        min_samples_leaf=config.LEAF_SAMPLES,
-        max_features=config.MAX_FEATURES,
-        oob_score=True,  # 用oob分数评估模型
-        n_jobs=-1,#多核
-        random_state=config.RANDOM_SEED#限定随机种子
-    )
+    rf = RandomForestClassifier(**config.RF_PARAMS)
 
     #交叉验证
     cv_score=cross_val_score(rf,x_train,y_train,cv=5)#五折交叉验证
@@ -43,7 +34,7 @@ def model_rf(result_path,feature):
     print(f"oob验证准确率:{rf.oob_score_:.4f}")
 
     # 输出测试集结果
-    test = pd.read_csv(config.CLEAN_TEST_DATA)
+    test = pd.read_csv(test_data)
     id = test["PassengerId"]  # 保留id
     for i in test.columns:  # 去除不要的特征
         if i not in feature:
@@ -59,6 +50,7 @@ def model_rf(result_path,feature):
     return cv_mean,cv_std
 
 #对预测集进行预测并存储结果
-model_rf(config.RF_RESULT,config.FEATURE_USED)
+if __name__ == "__main__":
+    model_rf(config.CLEAN_TRAIN_DATA,config.CLEAN_TEST_DATA,config.RF_RESULT,config.FEATURE_USED)
 
 

@@ -1,12 +1,24 @@
+import sys
+sys.path.append("..")
 import pandas as pd
-from pandas import read_csv
 import config
 
 #第一轮数据处理，处理缺失值和删除无用特征
+'''
 def data_clean_1(IN_PATH,OUT_PATH):
     data=pd.read_csv(IN_PATH)
     data=data.drop(columns=["Name","SibSp", "Parch", "Ticket", "Cabin"])
     data["Age"]=data["Age"].fillna(data["Age"].median())#中位数填充
+    data["Fare"] = data["Fare"].fillna(data["Fare"].median())#验证集fare缺了一个
+    data["Embarked"]=data["Embarked"].fillna("S")#众数填充
+    data.to_csv(OUT_PATH,index=False)#写入清洗后表格
+'''
+#优化：用同舱室内年龄中位数填充
+def data_clean_1(IN_PATH,OUT_PATH):
+    data=pd.read_csv(IN_PATH)
+    data=data.drop(columns=["Name","SibSp", "Parch", "Ticket", "Cabin"])
+    #data["Age"]=data["Age"].fillna(data["Age"].median())#中位数填充
+    data["Age"]=data.groupby("Pclass")["Age"].transform(lambda x:x.fillna(x.median()))#分舱室中位数填充
     data["Fare"] = data["Fare"].fillna(data["Fare"].median())#验证集fare缺了一个
     data["Embarked"]=data["Embarked"].fillna("S")#众数填充
     data.to_csv(OUT_PATH,index=False)#写入清洗后表格
