@@ -20,6 +20,13 @@ IN_PATH=r"../data/feature_data/train.csv"
 
 #数据消融结果路径
 OUT_PATH=r"../results/experiment/ablation/model.csv"
+#混合模型结果路径
+#特征工程前的混合模型结果
+HYBRID_BASE_RESULT = r"../results/experiment/hybrid/hybrid_base.csv"
+#如果后续想试特征工程后的混合模型，预留路径
+HYBRID_FEATURE_RESULT = r"../results/experiment/hybrid/hybrid_feature.csv"
+#混合模型专用：基础特征列表（特征工程前的核心特征，和单模型保持一致）
+HYBRID_FEATURE_USED = ["Pclass", "Sex", "Age", "Fare", "Embarked_S", "Embarked_C", "Embarked_Q"]
 
 #结果输出路径
 LOGISTIC_RESULT=r"../results/kaggle/model1.csv"
