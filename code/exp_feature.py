@@ -28,6 +28,7 @@ def feature(IN_PATH,OUT_PATH):
     data=pd.concat([data,title_sort],axis=1)
     #优化二：整合出新特征家庭规模
     data["Familysize"]=data["SibSp"]+data["Parch"]+1
+    '''
     #优化三：年龄分箱
     data["Age_sort"]=data["Age"].apply(lambda x:
                                        "kid" if x<=12 else
@@ -36,6 +37,7 @@ def feature(IN_PATH,OUT_PATH):
                                        "middle_age" if x<=60 else
                                        "elderly")
     data=pd.concat([data,pd.get_dummies(data["Age_sort"],"Age_sort")],axis=1)#独热编码
+    '''
     #优化四：票价分箱
     data["Fare_sort"]=data["Fare"].apply(lambda x:
                                          "Low" if x<=10 else
@@ -48,7 +50,7 @@ def feature(IN_PATH,OUT_PATH):
     embarked_dummies = pd.get_dummies(data["Embarked"],
                                       prefix="Embarked")  #独热编码
     data = pd.concat([data, embarked_dummies], axis=1)
-    data=data.drop(["Age_sort","Fare_sort","Age","Fare","Name","SibSp","Ticket","Parch","Cabin","Embarked","Title","Sort"],axis=1)
+    data=data.drop(["Fare_sort","Fare","Name","SibSp","Ticket","Parch","Cabin","Embarked","Title","Sort"],axis=1)
     data.to_csv(OUT_PATH,index=False)
     print("成功写入")
     return list(data.columns)
