@@ -15,6 +15,12 @@ FEATURES_LOGISTIC_RESULT=r"../results/experiment/feature/kaggle/model1.csv"
 FEATURES_RF_RESULT=r"../results/experiment/feature/kaggle/model2.csv"
 FEATURES_XGBOOST_RESULT=r"../results/experiment/feature/kaggle/model3.csv"
 
+#数据消融数据路径
+IN_PATH=r"../data/feature_data/train.csv"
+
+#数据消融结果路径
+OUT_PATH=r"../results/experiment/ablation/model.csv"
+
 #结果输出路径
 LOGISTIC_RESULT=r"../results/kaggle/model1.csv"
 RF_RESULT=r"../results/kaggle/model2.csv"
