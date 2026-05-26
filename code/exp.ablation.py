@@ -75,8 +75,8 @@ if __name__ == "__main__":
         'Pclass',
         'Familysize',
         'Title_Sort_elite',
-        'Age_sort_adult',
-        'Fare_sort_Low'
+        'Age',
+        'Fare'
     ]
     
     out_path = config.OUT_PATH
