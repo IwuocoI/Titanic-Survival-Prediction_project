@@ -4,7 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 from sklearn.model_selection import KFold
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 import warnings
 import sys
 import os
@@ -72,8 +72,15 @@ sub = pd.DataFrame({
 os.makedirs(os.path.dirname(config.HYBRID_BASE_RESULT), exist_ok=True)
 sub.to_csv(config.HYBRID_BASE_RESULT, index=False)
 
-# 验证分数
+# 验证分数(accuracy/F1/AUC)
 train_final_pred = meta_model.predict(train_meta_features)
 stacking_acc = accuracy_score(y, train_final_pred)
-print(f"\nStacking混合模型训练集准确率：{stacking_acc:.4f}")
+#用预测概率算AUC（Stacking第二层输出的是概率）
+train_meta_proba = meta_model.predict_proba(train_meta_features)[:, 1]
+stacking_f1 = f1_score(y, train_final_pred)
+stacking_auc = roc_auc_score(y, train_meta_proba)
+print(f"\nStacking混合模型交叉验证指标：")
+print(f"  Accuracy: {stacking_acc:.4f}")
+print(f"  F1:       {stacking_f1:.4f}")
+print(f"  AUC:      {stacking_auc:.4f}")
 print(f"结果已保存至：{config.HYBRID_BASE_RESULT}")

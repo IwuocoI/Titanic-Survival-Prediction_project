@@ -11,10 +11,10 @@ from xgboost import XGBClassifier
 
 def evaluate_model(X, y, model, cv=5, scoring=None):
     """
-    评估模型，返回指标'accuracy','f1'的平均值
+    评估模型，返回指标'accuracy','f1','roc_auc'的平均值
     """
     if scoring is None:
-        scoring = {'accuracy': 'accuracy', 'f1': 'f1'}
+        scoring = {'accuracy': 'accuracy', 'f1': 'f1', 'roc_auc': 'roc_auc'}
     cv_results = cross_validate(model, X, y, cv=cv, scoring=scoring, return_train_score=False)
     metrics = {}
     for metric in scoring:
@@ -77,6 +77,7 @@ def ablation(IN_PATH, features_to_remove, OUT_PATH, models_dict, cv=5):
             cur_metrics = evaluate_model(X_cur, y, model, cv=cv)
             row[f'{name}_acc_change'] = cur_metrics['accuracy_mean'] - baseline_metrics[name]['accuracy_mean']
             row[f'{name}_f1_change'] = cur_metrics['f1_mean'] - baseline_metrics[name]['f1_mean']
+            row[f'{name}_auc_change'] = cur_metrics['roc_auc_mean'] - baseline_metrics[name]['roc_auc_mean']
         results_rows.append(row)
 
     # 添加基线行（变化量为0）
@@ -84,6 +85,7 @@ def ablation(IN_PATH, features_to_remove, OUT_PATH, models_dict, cv=5):
     for name in models_dict.keys():
         baseline_row[f'{name}_acc_change'] = 0.0
         baseline_row[f'{name}_f1_change'] = 0.0
+        baseline_row[f'{name}_auc_change'] = 0.0
     result_df = pd.concat([pd.DataFrame([baseline_row]), pd.DataFrame(results_rows)], ignore_index=True)
 
     result_df.to_csv(OUT_PATH, index=False)
@@ -129,3 +131,9 @@ if __name__ == "__main__":
                         'LogisticRegression_f1_change',
                         'RandomForest_f1_change',
                         'XGBoost_f1_change']].to_string(index=False))
+
+    print("\n消融实验结果(AUC 变化量):")
+    print(result_table[['Removed_Feature',
+                        'LogisticRegression_auc_change',
+                        'RandomForest_auc_change',
+                        'XGBoost_auc_change']].to_string(index=False))

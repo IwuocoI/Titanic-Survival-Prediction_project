@@ -1,14 +1,15 @@
 import pandas as pd
 import sys
 
-from seaborn.colors import xkcd_rgb
-
 sys.path.append("..")#扩大运行环境以找到config
 import config
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_validate
 
 def model_rf(train_data,test_data,result_path,feature):
+    """
+    :return: 交叉验证平均准确率、F1、AUC
+    """
     data = pd.read_csv(train_data)
     for i in data.columns:  # 取用需要的特征
         if i not in feature:
@@ -21,11 +22,14 @@ def model_rf(train_data,test_data,result_path,feature):
     # 模型定义
     rf = RandomForestClassifier(**config.RF_PARAMS)
 
-    #交叉验证
-    cv_score=cross_val_score(rf,x_train,y_train,cv=5)#五折交叉验证
-    cv_mean=cv_score.mean()#平均准确率
-    cv_std=cv_score.std()#标准差
-    print(f"随机森林模型:\n五折交叉验证平均准确率:{cv_mean:.4f}\n标准差:{cv_std:.4}")
+    #交叉验证(accuracy/F1/AUC)
+    scoring = {'accuracy': 'accuracy', 'f1': 'f1', 'roc_auc': 'roc_auc'}
+    cv_results = cross_validate(rf, x_train, y_train, cv=5, scoring=scoring, return_train_score=False)
+    cv_mean = cv_results['test_accuracy'].mean()
+    cv_std = cv_results['test_accuracy'].std()
+    f1_mean = cv_results['test_f1'].mean()
+    auc_mean = cv_results['test_roc_auc'].mean()
+    print(f"随机森林模型:\n  Accuracy: {cv_mean:.4f} (±{cv_std:.4f})\n  F1:       {f1_mean:.4f}\n  AUC:      {auc_mean:.4f}")
 
     # 训练
     rf.fit(x_train, y_train)
@@ -46,8 +50,8 @@ def model_rf(train_data,test_data,result_path,feature):
     result.to_csv(result_path, index=False)
     print("预测结果已存入结果文件夹")
 
-    #返回准确率
-    return cv_mean,cv_std
+    #返回准确率、F1、AUC
+    return cv_mean, f1_mean, auc_mean
 
 #对预测集进行预测并存储结果
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import cross_validate
 import sys
 sys.path.append("..")
 import config
@@ -13,7 +13,7 @@ def model_lr(train_data,test_data,result_path, feature_cols, label_col="Survived
     :param feature_cols: 要使用的特征列列表（仅特征，不含标签/ID）
     :param label_col: 标签列名（适配Survived）
     :param id_col: ID列名（适配PassengerId）
-    :return: 交叉验证平均分、标准差
+    :return: 交叉验证平均准确率、F1、AUC
     """
     #读取数据
     train_df = pd.read_csv(train_data)
@@ -41,12 +41,15 @@ def model_lr(train_data,test_data,result_path, feature_cols, label_col="Survived
     X_train_scaled = scaler.fit_transform(X_train)
     X_test_scaled = scaler.transform(X_test)
     
-    #模型训练+交叉验证
+    #模型训练+交叉验证(accuracy/F1/AUC)
     model = LogisticRegression(**config.LOGISTIC_PARAMS)
-    val_scores = cross_val_score(model, X_train_scaled, Y_train, cv=5)
-    cv_mean = val_scores.mean()
-    cv_std = val_scores.std()
-    print(f"逻辑回归5折交叉验证平均分: {cv_mean:.4f}\n 标准差: {cv_std:.4f}")
+    scoring = {'accuracy': 'accuracy', 'f1': 'f1', 'roc_auc': 'roc_auc'}
+    cv_results = cross_validate(model, X_train_scaled, Y_train, cv=5, scoring=scoring, return_train_score=False)
+    cv_mean = cv_results['test_accuracy'].mean()
+    cv_std = cv_results['test_accuracy'].std()
+    f1_mean = cv_results['test_f1'].mean()
+    auc_mean = cv_results['test_roc_auc'].mean()
+    print(f"逻辑回归5折交叉验证:\n  Accuracy: {cv_mean:.4f} (±{cv_std:.4f})\n  F1:       {f1_mean:.4f}\n  AUC:      {auc_mean:.4f}")
     
     #预测并保存
     model.fit(X_train_scaled, Y_train)
@@ -55,7 +58,7 @@ def model_lr(train_data,test_data,result_path, feature_cols, label_col="Survived
     result.to_csv(result_path, index=False)
     print(f"逻辑回归预测结果已存入: {result_path}")
     
-    return cv_mean, cv_std
+    return cv_mean, f1_mean, auc_mean
 
 #对预测集进行预测并存储结果
 if __name__ == "__main__":

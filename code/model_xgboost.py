@@ -16,13 +16,11 @@ def model_xgboost(train_data,test_data,result_path, features):
     x_train = data.drop("Survived", axis=1)
     y_train = data["Survived"]
 
-    # 多指标交叉验证
-    print("开始 5 折交叉验证（多指标）")
+    # 多指标交叉验证(accuracy/F1/AUC)
+    print("开始 5 折交叉验证")
     cv_model = XGBClassifier(**config.XGBOOST_PARAMS)
     scoring = {
         'accuracy': 'accuracy',
-        'precision': 'precision',
-        'recall': 'recall',
         'f1': 'f1',
         'roc_auc': 'roc_auc'
     }
@@ -34,7 +32,8 @@ def model_xgboost(train_data,test_data,result_path, features):
         scores = cv_results[f'test_{metric}']
         print(f"{metric:>10}: {scores.mean():.4f} (±{scores.std():.4f})")
     mean_accuracy = cv_results['test_accuracy'].mean()
-    print(f"交叉验证平均准确率: {mean_accuracy:.4f}")
+    f1_mean = cv_results['test_f1'].mean()
+    auc_mean = cv_results['test_roc_auc'].mean()
 
     #训练最终模型
     print("\n开始训练最终模型(全量训练集)")
@@ -53,7 +52,7 @@ def model_xgboost(train_data,test_data,result_path, features):
     result.to_csv(result_path, index=False)
     print("预测结果已存入结果文件夹")
 
-    return mean_accuracy
+    return mean_accuracy, f1_mean, auc_mean
 
 
 if __name__ == "__main__":
