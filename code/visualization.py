@@ -8,7 +8,6 @@ import seaborn as sns
 import os
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
-
 # 设置中文字体，防乱码
 plt.rcParams['font.sans-serif'] = ['Microsoft YaHei', 'SimHei', 'DejaVu Sans']
 plt.rcParams['axes.unicode_minus'] = False
@@ -268,7 +267,7 @@ def vis_faresort_survived(data_path, save_path):
 # ============================================================
 
 def vis_model_comparison_6groups(baseline_metrics, feat_metrics, basline_kaggle, feat_kaggle, save_path,
-                                  hybrid_metrics=None, hybrid_kaggle=None):
+                                 hybrid_metrics=None, hybrid_kaggle=None):
     """
     模型性能 + Kaggle分数对比图（含混合模型）
     baseline_metrics: [{'name':'逻辑回归', 'acc':a, 'f1':f, 'auc':u}, ...]  (3个基线)
@@ -283,7 +282,7 @@ def vis_model_comparison_6groups(baseline_metrics, feat_metrics, basline_kaggle,
     for name in model_names:
         group_labels.append(f'{name}\n基线')
         group_labels.append(f'{name}\n特征工程')
-    
+
     all_acc = []
     all_f1 = []
     all_auc = []
@@ -292,7 +291,7 @@ def vis_model_comparison_6groups(baseline_metrics, feat_metrics, basline_kaggle,
         all_acc.append(baseline_metrics[i]['acc'])
         all_f1.append(baseline_metrics[i]['f1'])
         all_auc.append(baseline_metrics[i]['auc'])
-        all_kaggle.append(baseline_kaggle[i])
+        all_kaggle.append(basline_kaggle[i])
         all_acc.append(feat_metrics[i]['acc'])
         all_f1.append(feat_metrics[i]['f1'])
         all_auc.append(feat_metrics[i]['auc'])
@@ -312,10 +311,10 @@ def vis_model_comparison_6groups(baseline_metrics, feat_metrics, basline_kaggle,
 
     fig, ax = plt.subplots(figsize=(15, 7))
 
-    bars_acc = ax.bar(x - 1.5*w, all_acc, w, label='Accuracy', color='#4C72B0')
-    bars_f1  = ax.bar(x - 0.5*w, all_f1,  w, label='F1',        color='#55A868')
-    bars_auc = ax.bar(x + 0.5*w, all_auc, w, label='AUC',       color='#DD8452')
-    bars_kgl = ax.bar(x + 1.5*w, all_kaggle, w, label='Kaggle',    color='#8172B3')
+    bars_acc = ax.bar(x - 1.5 * w, all_acc, w, label='Accuracy', color='#4C72B0')
+    bars_f1 = ax.bar(x - 0.5 * w, all_f1, w, label='F1', color='#55A868')
+    bars_auc = ax.bar(x + 0.5 * w, all_auc, w, label='AUC', color='#DD8452')
+    bars_kgl = ax.bar(x + 1.5 * w, all_kaggle, w, label='Kaggle', color='#8172B3')
 
     all_vals = all_acc + all_f1 + all_auc + [v for v in all_kaggle if v > 0]
     y_min = max(0.45, min(all_vals) - 0.03)
@@ -333,7 +332,7 @@ def vis_model_comparison_6groups(baseline_metrics, feat_metrics, basline_kaggle,
             height = bar.get_height()
             if height == 0:
                 continue
-            ax.text(bar.get_x() + bar.get_width()/2., height + 0.002,
+            ax.text(bar.get_x() + bar.get_width() / 2., height + 0.002,
                     f'{height:.4f}', ha='center', va='bottom', fontsize=7, rotation=30)
 
     # 分隔线
@@ -345,6 +344,105 @@ def vis_model_comparison_6groups(baseline_metrics, feat_metrics, basline_kaggle,
     plt.savefig(save_path, dpi=150, bbox_inches='tight')
     plt.close()
     print(f"模型性能对比图已保存: {save_path}")
+
+    # ========== 【内嵌追加：三张衍生图 开始】 ==========
+    # 图1：三个基线模型对比
+    m_names1 = ['逻辑回归', '随机森林', 'XGBoost']
+    x1 = np.arange(len(m_names1))
+    w1 = 0.18
+    acc1 = [m['acc'] for m in baseline_metrics]
+    f1_1 = [m['f1'] for m in baseline_metrics]
+    auc1 = [m['auc'] for m in baseline_metrics]
+    kag1 = basline_kaggle
+
+    fig1, ax1 = plt.subplots(figsize=(10, 7))
+    ax1.bar(x1 - 1.5 * w1, acc1, w1, label='Accuracy', color='#4C72B0')
+    ax1.bar(x1 - 0.5 * w1, f1_1, w1, label='F1', color='#55A868')
+    ax1.bar(x1 + 0.5 * w1, auc1, w1, label='AUC', color='#DD8452')
+    ax1.bar(x1 + 1.5 * w1, kag1, w1, label='Kaggle', color='#8172B3')
+    val1 = acc1 + f1_1 + auc1 + kag1
+    ax1.set_ylim(max(0.55, min(val1) - 0.03), max(val1) + 0.03)
+    ax1.set_xticks(x1)
+    ax1.set_xticklabels(m_names1)
+    ax1.set_ylabel('得分')
+    ax1.set_title('三大基线模型性能对比')
+    ax1.legend(loc='upper right')
+    for idx, val in enumerate(acc1):
+        ax1.text(idx - 1.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+    for idx, val in enumerate(f1_1):
+        ax1.text(idx - 0.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+    for idx, val in enumerate(auc1):
+        ax1.text(idx + 0.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+    for idx, val in enumerate(kag1):
+        ax1.text(idx + 1.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+    plt.tight_layout()
+    plt.savefig(save_path.replace(".png", "_基线模型.png"), dpi=150, bbox_inches="tight")
+    plt.close()
+    print("基线模型对比图已保存")
+
+    # 图2：三个特征工程模型对比
+    acc2 = [m['acc'] for m in feat_metrics]
+    f1_2 = [m['f1'] for m in feat_metrics]
+    auc2 = [m['auc'] for m in feat_metrics]
+    kag2 = feat_kaggle
+    fig2, ax2 = plt.subplots(figsize=(10, 7))
+    ax2.bar(x1 - 1.5 * w1, acc2, w1, label='Accuracy', color='#4C72B0')
+    ax2.bar(x1 - 0.5 * w1, f1_2, w1, label='F1', color='#55A868')
+    ax2.bar(x1 + 0.5 * w1, auc2, w1, label='AUC', color='#DD8452')
+    ax2.bar(x1 + 1.5 * w1, kag2, w1, label='Kaggle', color='#8172B3')
+    val2 = acc2 + f1_2 + auc2 + kag2
+    ax2.set_ylim(max(0.55, min(val2) - 0.03), max(val2) + 0.03)
+    ax2.set_xticks(x1)
+    ax2.set_xticklabels(m_names1)
+    ax2.set_ylabel('得分')
+    ax2.set_title('三大特征工程模型性能对比')
+    ax2.legend(loc='upper right')
+    for idx, val in enumerate(acc2):
+        ax2.text(idx - 1.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+    for idx, val in enumerate(f1_2):
+        ax2.text(idx - 0.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+    for idx, val in enumerate(auc2):
+        ax2.text(idx + 0.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+    for idx, val in enumerate(kag2):
+        ax2.text(idx + 1.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+    plt.tight_layout()
+    plt.savefig(save_path.replace(".png", "_特征工程模型.png"), dpi=150, bbox_inches="tight")
+    plt.close()
+    print("特征工程模型对比图已保存")
+
+    # 图3：基线 + 混合模型对比
+    if hybrid_metrics is not None and hybrid_kaggle is not None:
+        m_names3 = ['逻辑回归', '随机森林', 'XGBoost', 'Stacking混合模型']
+        x3 = np.arange(len(m_names3))
+        acc3 = acc1 + [hybrid_metrics['acc']]
+        f1_3 = f1_1 + [hybrid_metrics['f1']]
+        auc3 = auc1 + [hybrid_metrics['auc']]
+        kag3 = kag1 + [hybrid_kaggle]
+        fig3, ax3 = plt.subplots(figsize=(12, 7))
+        ax3.bar(x3 - 1.5 * w1, acc3, w1, label='Accuracy', color='#4C72B0')
+        ax3.bar(x3 - 0.5 * w1, f1_3, w1, label='F1', color='#55A868')
+        ax3.bar(x3 + 0.5 * w1, auc3, w1, label='AUC', color='#DD8452')
+        ax3.bar(x3 + 1.5 * w1, kag3, w1, label='Kaggle', color='#8172B3')
+        val3 = acc3 + f1_3 + auc3 + kag3
+        ax3.set_ylim(max(0.55, min(val3) - 0.03), max(val3) + 0.03)
+        ax3.set_xticks(x3)
+        ax3.set_xticklabels(m_names3)
+        ax3.set_ylabel('得分')
+        ax3.set_title('基线模型与Stacking混合模型性能对比')
+        ax3.legend(loc='upper right')
+        for idx, val in enumerate(acc3):
+            ax3.text(idx - 1.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+        for idx, val in enumerate(f1_3):
+            ax3.text(idx - 0.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+        for idx, val in enumerate(auc3):
+            ax3.text(idx + 0.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+        for idx, val in enumerate(kag3):
+            ax3.text(idx + 1.5 * w1, val + 0.002, f"{val:.4f}", ha="center", fontsize=8)
+        plt.tight_layout()
+        plt.savefig(save_path.replace(".png", "_基线+混合模型.png"), dpi=150, bbox_inches="tight")
+        plt.close()
+        print("基线+混合模型对比图已保存")
+    # ========== 【内嵌追加：三张衍生图 结束】 ==========
 
 def vis_feature_importance(data_path, save_path):
     """RF特征重要性水平柱状图"""
